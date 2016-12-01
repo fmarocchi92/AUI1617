@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>AUI Project</title>
+    <meta name="description" content="360&deg; Image Gallery - A-Frame">
+	<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
+    <script src="https://rawgit.com/aframevr/aframe/917c06889ee1f3f79b7b1bbd9eab9815f9512503/dist/aframe.min.js"></script>
+	<!--<script src="components/kframe.min.js"></script>-->
+	<!--<script src="components/apiai-src/api.ai.js"></script>-->
+	<script src="components/api-controller.js"></script>
+    <script src="https://npmcdn.com/aframe-animation-component@3.0.1"></script>
+    <script src="https://npmcdn.com/aframe-event-set-component@3.0.1"></script>
+    <script src="https://npmcdn.com/aframe-layout-component@3.0.1"></script>
+    <script src="https://npmcdn.com/aframe-template-component@3.0.1"></script>
+	<script src="https://rawgit.com/donmccurdy/aframe-extras/v2.1.1/dist/aframe-extras.loaders.min.js"></script>
+    <script src="components/set-image.js"></script>
+    <script src="components/update-raycaster.js"></script>
+	<script src="https://rawgit.com/bryik/aframe-bmfont-text-component/master/dist/aframe-bmfont-text-component.min.js"></script>
+  </head>
+  <body>
+    <a-scene>
+      <a-assets>
+		    <a-asset-item id="myPlyModel" src="components/scene-demo.bake.ply"></a-asset-item>	
+		<!--<a-asset-item id="myModelObj" src="components/scene-demo.obj"></a-asset-item>
+        <a-asset-item id="myModelMtl" src="components/scene-demo.mtl"></a-asset-item>-->
+      </a-assets>		
+		<!-- Text Label -->
+		<a-entity id="label" bmfont-text="text: HELLO!; color: #333" position="0 1 -3"
+		update-label="on: textRecognized"></a-entity>
+		<!--Scene model-->
+		<a-entity ply-model="src: #myPlyModel" rotation="-90 0 0" position="0 0 0" scale="0.5 0.5 0.5"></a-entity>
+		
+		
+      <!-- Camera + cursor. -->
+     <a-entity camera="active:false;near:0.01" look-controls="" position="0 2 0" rotation="2.1772396214971272 13.52180396508745 0" wasd-controls="">
+        <a-cursor id="cursor" animation__click="property: scale; startEvents: click; from: 0.1 0.1 0.1; to: 1 1 1; dur: 150" animation__fusing="property: fusing; startEvents: fusing; from: 1 1 1; to: 0.1 0.1 0.1; dur: 1500" event-set__1="_event: mouseenter; color: springgreen" event-set__2="_event: mouseleave; color: black" raycaster="objects: .link" material="" cursor="" geometry="" color="springgreen"></a-cursor>
+      </a-entity>
+    </a-scene>
+  </body>
+</html>
