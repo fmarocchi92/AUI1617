@@ -1,18 +1,32 @@
 var accessToken = "4d20d9ed191a4844999c08ce3c379794";
 var baseUrl = "https://api.api.ai/v1/";
 var recognizedText = "";
+
+//begin recognition at startup
 $(document).ready(function() {
 	startRecognition();
 });
 
 
 function startRecognition() {
+	//add listener to body to update label text according to the recognized text
+	//(apparently if I add the listener directly to the label it doesn't capture events)
+	var label = document.getElementById("label");
+	console.log(label);
+	document.body.addEventListener("textRecognized", function (e) {
+		label.setAttribute("bmfont-text","text:"+e.detail);
+    }, false);
+	
+	//init and start Webkit Speech Recognition
 	recognition = new webkitSpeechRecognition();
+	//enable continuous recognition
 	recognition.continuous = true;
+	//enable intermediate results
 	recognition.interimResults = false;
 	recognition.onstart = function(event) {
 		console.log("start recognition");
 	};
+	//send recognized text to api.ai
 	recognition.onresult = function(event) {
 		var text = "";
 		for (var i = event.resultIndex; i < event.results.length; ++i) {
@@ -20,6 +34,9 @@ function startRecognition() {
 		}
 		setInput(text);
 	};
+	
+	//restart recognition as soon as it ends 
+	//TODO find a way to avoid doing this
 	recognition.onend = function() {
 		console.log("end of recognition");
 		recognition.start();
@@ -30,14 +47,13 @@ function startRecognition() {
 
 function setInput(text) {
 	recognizedText = text;
-	console.log(text);
+	//dispatch event containing recognized text to update text label
 	var evt = new CustomEvent("textRecognized", { detail: recognizedText });
-    window.dispatchEvent(evt);
-	//$label.bmfont-text="text: "+text+"; color: #333" position="0 0 -5";
-	
+    document.body.dispatchEvent(evt);
 	send();
 }
 
+//send a query to api.ai to obtain the relevant features of the recognized text
 function send() {
 	var text = recognizedText;
 	$.ajax({
@@ -63,22 +79,3 @@ function send() {
 function setResponse(val) {
 	console.log(val);
 }
-
-
-AFRAME.registerComponent('update-label', {
-  schema: {
-	on: {type: 'string'}
-	},
-
-  init: function () {
-    var labelEl = this.el;
-	var data = this.data;
-	console.log("adding Listener");
-	labelEl.addEventListener(data.on, function (e) {
-		//labelEl.components.bmfont-text.text = e.detail;
-		console.log(e.detail);
-		labelEl.components.bmfont-text.update(e.detail);
-    });
-  
-  }
-});
