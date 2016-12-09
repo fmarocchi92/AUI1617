@@ -1,6 +1,7 @@
 var accessToken = "4d20d9ed191a4844999c08ce3c379794";
 var baseUrl = "https://api.api.ai/v1/";
 var recognizedText = "";
+var language = "en-US";
 
 //begin recognition at startup
 $(document).ready(function() {
@@ -41,7 +42,7 @@ function startRecognition() {
 		console.log("end of recognition");
 		recognition.start();
 	};
-	recognition.lang = "en-US";
+	recognition.lang = language;
 	recognition.start();
 }
 
@@ -68,6 +69,9 @@ function send() {
 
 		success: function(data) {
 			setResponse(JSON.stringify(data, undefined, 2));
+			
+			//here we send the api.ai response to the speech synthesizer
+			speak(data.result.fulfillment.speech);
 		},
 		error: function() {
 			setResponse("Internal Server Error");
@@ -78,4 +82,25 @@ function send() {
 
 function setResponse(val) {
 	console.log(val);
+}
+
+// TTS functionality
+function speak(text, callback) {
+    var u = new SpeechSynthesisUtterance();
+    u.text = text;
+    u.lang = language;
+ 
+    u.onend = function () {
+        if (callback) {
+            callback();
+        }
+    };
+	
+    u.onerror = function (e) {
+        if (callback) {
+            callback(e);
+        }
+    };
+ 
+    speechSynthesis.speak(u);
 }
