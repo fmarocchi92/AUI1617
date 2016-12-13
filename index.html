@@ -32,6 +32,20 @@
          		  explode="on: click; intensity: 3">
 	    	</a-entity>
 	    
+	    	<!-- Component to change to random color on click.-->
+	    <script>
+		AFRAME.registerComponent('cursor-listener', {
+		  init: function () {
+		    var COLORS = ['red', 'green', 'blue'];
+		    this.el.addEventListener('click', function (evt) {
+		      var randomIndex = Math.floor(Math.random() * COLORS.length);
+		      this.setAttribute('material', 'color', COLORS[randomIndex]);
+		    });
+		  }
+		});
+	    </script>
+
+	    
 	    	<!-- Old Camera Settings -->
 		<!-- Camera (active:false;)-->
 		<!--- <a-entity camera="near:0.01" look-controls="" position="0 2 0" rotation="2.1772396214971272 13.52180396508745 0" 
