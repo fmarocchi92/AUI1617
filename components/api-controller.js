@@ -5,6 +5,8 @@ var language = "en-US"; //"it"
 var recognition;
 var label;
 var log = "";
+var selectedShapeID="";
+var selectedColor="";
 
 //begin recognition at startup
 $(document).ready(function() {
@@ -98,20 +100,39 @@ function apiAiQuery() {
 		data: JSON.stringify({ query: text, lang: "en", sessionId: "somerandomthing" }),
 
 		success: function(data) {
-			setResponse(JSON.stringify(data, undefined, 2));
-			
+			console.log(JSON.stringify(data, undefined, 2));
+			setResponse(data);
 			//here we send the api.ai response to the speech synthesizer
 			tts(data.result.fulfillment.speech);
 		},
 		error: function() {
-			setResponse("Internal Server Error");
+			// setResponse("Internal Server Error");
 		}
 	});
-	setResponse("Loading...");
+	// setResponse("Loading...");
 }
 
 function setResponse(val) {
 	// myLog(val);
+	if(val.result.action=="change_color"){
+		if(val.result.parameters.Shapes != "")
+			selectedShapeID = val.result.parameters.Shapes;
+			myLog("selected Shape: "+selectedShapeID);
+		if(val.result.parameters.color != "")
+			selectedColor = val.result.parameters.color;
+			myLog("selected Color: "+selectedColor);
+		if(selectedShapeID!="" && selectedColor!=""){
+			var selectedElement = document.getElementById(selectedShapeID);
+			console.log(selectedElement);
+			myLog("changing "+selectedShapeID+" color to "+selectedColor);
+			selectedElement.setAttribute("color",selectedColor);
+			
+			selectedColor="";
+			selectedShapeID="";
+		}
+		
+	}
+	
 }
 
 //*************** SPEECH SYNTHESIS ********************
