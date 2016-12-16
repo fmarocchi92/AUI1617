@@ -7,6 +7,18 @@ var label;
 var log = "";
 var selectedShapeID="";
 var selectedColor="";
+var startRecCallback = function(){
+		onStartRecognition();
+};
+var endRecCallback = function(){
+		onEndRecognition();
+};
+var resultRecCallback = function(event){
+		onRecognitionResult(event);
+};	
+var errorRecCallback = function (e) {
+		myLog(e);
+};
 
 //begin recognition at startup
 $(document).ready(function() {
@@ -15,7 +27,8 @@ $(document).ready(function() {
 
 function enableSpeechAPI(){
 	init();
-	startRecognition();
+	initRecognition();
+	recognition.start();
 }
 
 
@@ -30,33 +43,20 @@ function init () {
     }, false);
 }
 
-function startRecognition() {
-	//init and start webkitSpeechRecognition (Chrome)
+function initRecognition() {
+	//init webkitSpeechRecognition (Chrome)
 	recognition = new webkitSpeechRecognition();
-	//enable continuous recognition
+	//disable continuous recognition as on mobile it fires recognition events twice
 	recognition.continuous = false;
 	//disable intermediate results
 	recognition.interimResults = false;
-	recognition.onstart = function(){
-		onStartRecognition();
-	};
-	//send recognized text to api.ai
-	recognition.onresult = function(event){
-		onRecognitionResult(event);
-	};	
-	recognition.onend = function(){
-		onEndRecognition();
-	};
-	
-	recognition.onerror = function (e) {
-		myLog(e);
-	};
+	//assign callback functions
+	recognition.onstart = startRecCallback;
+	recognition.onresult = resultRecCallback;
+	recognition.onend = endRecCallback;
+	recognition.onerror = errorRecCallback;
 	
 	recognition.lang = language;
-	recognition.start();
-	setTimeout(function(){
-		recognition.stop();
-	}, 200);
 }
 
 function onStartRecognition(){
