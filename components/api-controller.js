@@ -5,7 +5,7 @@ var language = "en-US"; //"it"
 var recognition;
 var label;
 var log = "";
-var lastLogLine ="";
+var lastLogLine ="stare at a shape and say 'change the color'";
 var selectedShapeID="";
 var selectedColor="";
 var recognitionRunning = false;
@@ -132,15 +132,15 @@ function setResponse(val) {
 			
 			selectedColor="";
 			selectedShapeID="";
-		}
-		
+		}	
 	}
-	
 }
 
 //*************** SPEECH SYNTHESIS ********************
 function tts(text){
-	myLog("saying :"+text);
+	if(tts=="")
+		return;
+	myLog("tts: "+text);
 	if(recognitionRunning)	//stop recognition in case it is still running (it shouldn't)
 		recognition.stop();
 	speak(text, 
