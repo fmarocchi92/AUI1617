@@ -5,8 +5,12 @@ var language = "en-US"; //"it"
 var recognition;
 var label;
 var log = "";
+var lastLogLine ="";
 var selectedShapeID="";
 var selectedColor="";
+var recognitionRunning = false;
+var conversationRunning = false;
+
 var startRecCallback = function(){
 		onStartRecognition();
 };
@@ -28,7 +32,7 @@ $(document).ready(function() {
 function enableSpeechAPI(){
 	init();
 	initRecognition();
-	recognition.start();
+	// recognition.start();
 }
 
 
@@ -60,18 +64,16 @@ function initRecognition() {
 }
 
 function onStartRecognition(){
-	// myLog("start recognition");
+	myLog("start recognition");
+	recognitionRunning = true;
 }
 
-	//restart recognition as soon as it ends 
-	//TODO find a way to avoid the need to do this
 function onEndRecognition(){
-	// myLog("end of recognition");
-	recognition.start();
+	myLog("end of recognition");
+	recognitionRunning = false;
 }
 
 function onRecognitionResult(event){
-	// myLog("recognition result");
 	//retrieve recognized text
 	recognizedText = "";
 	/*for (var i = event.resultIndex; i < event.results.length; ++i) {
@@ -81,7 +83,6 @@ function onRecognitionResult(event){
 	//dispatch event containing recognized text to update text label
 	var evt = new CustomEvent("textRecognized", { detail: recognizedText });
     document.body.dispatchEvent(evt);
-	myLog("dispatching Event");	
 	//send a query to api.ai to obtain the relevant features of the recognized text
 	apiAiQuery();
 }
@@ -98,7 +99,7 @@ function apiAiQuery() {
 			"Authorization": "Bearer " + accessToken
 		},
 		data: JSON.stringify({ query: text, lang: "en", sessionId: "somerandomthing" }),
-
+		
 		success: function(data) {
 			console.log(JSON.stringify(data, undefined, 2));
 			setResponse(data);
@@ -106,22 +107,24 @@ function apiAiQuery() {
 			tts(data.result.fulfillment.speech);
 		},
 		error: function() {
-			// setResponse("Internal Server Error");
+			myLog("Api.ai error");
 		}
 	});
-	// setResponse("Loading...");
 }
 
 function setResponse(val) {
 	// myLog(val);
+	if(val.result.actionIncomplete){
+		conversationRunning = true;
+	}
 	if(val.result.action=="change_color"){
 		if(val.result.parameters.Shapes != "")
 			selectedShapeID = val.result.parameters.Shapes;
-			myLog("selected Shape: "+selectedShapeID);
+		myLog("selected Shape: "+selectedShapeID);
 		if(val.result.parameters.color != "")
 			selectedColor = val.result.parameters.color;
-			myLog("selected Color: "+selectedColor);
-		if(selectedShapeID!="" && selectedColor!=""){
+		myLog("selected Color: "+selectedColor);
+		if(selectedShapeID!="" && selectedColor!=""){ //actually update the shape's color
 			var selectedElement = document.getElementById(selectedShapeID);
 			console.log(selectedElement);
 			myLog("changing "+selectedShapeID+" color to "+selectedColor);
@@ -137,22 +140,18 @@ function setResponse(val) {
 
 //*************** SPEECH SYNTHESIS ********************
 function tts(text){
-	// myLog("trying to speak");
-	recognition.onend = function() { //disable automatic restart of speech recognition
-		myLog("end of recognition without restart");
-	};
-	//stop recognition while synthesizing
-	recognition.stop();
+	myLog("saying :"+text);
+	if(recognitionRunning)	//stop recognition in case it is still running (it shouldn't)
+		recognition.stop();
 	speak(text, 
 		function(e){
 			myLog("Speech Synthesis Error: "+e);
 		},
-		function(){ //restart recognition after tts ends and re-enable the recognition automatic restart
-			myLog("End of speech synthesis");
-			recognition.onend = function(){
-				onEndRecognition();
-			};
-			recognition.start();
+		function(){ //restart recognition after tts ends if we're in the middle of a conversation
+			if(conversationRunning){
+				recognition.start();
+				conversationRunning = false;
+			}
 		});
 }
 
@@ -161,23 +160,26 @@ function speak(text, errorCallback, endCallback) {
     var u = new SpeechSynthesisUtterance();
     u.text = text;
     u.lang = language;
- 
-    u.onend = function () {
-        if (endCallback) {
-            endCallback();
-        }
-    };
 	
-    u.onerror = function (e) {
-        if (errorCallback) {
-            errorCallback(e);
-        }
-    };
+	u.onend = endCallback;
+    u.onerror = errorCallback;
+	
     speechSynthesis.speak(u);
 }
 
 function myLog(text){
 	console.log(text);
-	log+=text+"\n";
-	label.setAttribute("bmfont-text","text:"+ log);
+	log=lastLogLine+"\n"+text;
+	label.setAttribute("bmfont-text","text:"+ log+";color: #333; align:center; lineHeight:30");
+	lastLogLine = text;
 }
+
+
+AFRAME.registerComponent('start-recognition', {
+	init: function () {
+		this.el.addEventListener("click",function(){
+			if(!recognitionRunning)
+				recognition.start();
+		});
+	}
+});
