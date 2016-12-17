@@ -18,8 +18,7 @@
 		<a-asset-item id="myPlyModel" src="components/scene-demo.bake.ply"></a-asset-item>
       </a-assets>	
 	  
-		<!-- Text Label -->
-		<a-entity id="label" bmfont-text="text: HELLO!; color: #333" position="0 1 -3"></a-entity>
+		
 		<!--Scene model-->
 		<a-entity ply-model="src: #myPlyModel" rotation="-90 0 0" position="0 0 0" scale="0.5 0.5 0.5"></a-entity>
 	    	<!-- Sphere -->
@@ -56,6 +55,8 @@
 					<a-animation begin="mouseenter" attribute="color" from="#000000" to="#00FF00" dur="0"></a-animation>
 					<a-animation begin="mouseleave" attribute="color" from="#00FF00" to="#000000" dur="0"></a-animation>
 				</a-cursor>
+				<!-- Text Label now always in front of the camera-->
+				<a-entity id="label" bmfont-text="text: HELLO!; color: #333; align:center; lineHeight:30" scale="0.25 0.25 0.25" position="-0.625 -0.3 -0.5"></a-entity>
 		</a-camera>
 		
 		<!-- Blue skybox -->
