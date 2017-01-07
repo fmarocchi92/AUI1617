@@ -1,7 +1,7 @@
-var accessToken = "4d20d9ed191a4844999c08ce3c379794";
+var accessToken = "28c5fcae820143289464598b76f4967c";
 var baseUrl = "https://api.api.ai/v1/";
 var recognizedText = "";
-var language = "en-US"; //"it"
+var language = "it"; //"en-US"; 
 var recognition;
 var label;
 var log = "";
@@ -24,15 +24,9 @@ var errorRecCallback = function (e) {
 		myLog(e);
 };
 
-//begin recognition at startup
-$(document).ready(function() {
-	enableSpeechAPI();
-});
-
 function enableSpeechAPI(){
 	init();
 	initRecognition();
-	// recognition.start();
 }
 
 
@@ -40,11 +34,11 @@ function init () {
 	//add listener to body to update label text according to the recognized text
 	//(apparently if I add the listener directly to the label it doesn't capture events)
 	label = document.getElementById("label");
-	document.body.addEventListener("textRecognized", function (e) {
-		myLog("Recognized:" + e.detail);
-		label.setAttribute("bmfont-text","text:"+e.detail);
-		e.stopPropagation();
-    }, false);
+	// document.body.addEventListener("textRecognized", function (e) {
+		// myLog("Recognized:" + e.detail);
+		// label.setAttribute("bmfont-text","text:"+e.detail);
+		// e.stopPropagation();
+    // }, false);
 }
 
 function initRecognition() {
@@ -84,11 +78,10 @@ function onRecognitionResult(event){
 	var evt = new CustomEvent("textRecognized", { detail: recognizedText });
     document.body.dispatchEvent(evt);
 	//send a query to api.ai to obtain the relevant features of the recognized text
-	apiAiQuery();
 }
 
 //send a query to api.ai to obtain the relevant features of the recognized text
-function apiAiQuery() {
+function apiAiQuery(recognizedText) {
 	var text = recognizedText;
 	$.ajax({
 		type: "POST",
@@ -98,13 +91,11 @@ function apiAiQuery() {
 		headers: {
 			"Authorization": "Bearer " + accessToken
 		},
-		data: JSON.stringify({ query: text, lang: "en", sessionId: "somerandomthing" }),
+		data: JSON.stringify({ query: text, lang: "it", sessionId: "somerandomthing" }),
 		
-		success: function(data) {
-			console.log(JSON.stringify(data, undefined, 2));
-			setResponse(data);
-			//here we send the api.ai response to the speech synthesizer
-			tts(data.result.fulfillment.speech);
+		success:function(data){
+			var evt = new CustomEvent("apiAiResponse", { detail: data });
+			document.body.dispatchEvent(evt);
 		},
 		error: function() {
 			myLog("Api.ai error");
@@ -173,13 +164,3 @@ function myLog(text){
 	label.setAttribute("bmfont-text","text:"+ log+";color: #333; align:center; lineHeight:30");
 	lastLogLine = text;
 }
-
-
-AFRAME.registerComponent('start-recognition', {
-	init: function () {
-		this.el.addEventListener("click",function(){
-			if(!recognitionRunning)
-				recognition.start();
-		});
-	}
-});
