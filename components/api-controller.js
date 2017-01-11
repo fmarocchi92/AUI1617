@@ -74,7 +74,7 @@ function onRecognitionResult(event){
 		recognizedText += event.results[i][0].transcript;
 	}*/
 	recognizedText += event.results[event.resultIndex][0].transcript;
-	//dispatch event containing recognized text to update text label
+	//dispatch event containing recognized text
 	var evt = new CustomEvent("textRecognized", { detail: recognizedText });
     document.body.dispatchEvent(evt);
 	//send a query to api.ai to obtain the relevant features of the recognized text
@@ -93,7 +93,7 @@ function apiAiQuery(recognizedText) {
 		},
 		data: JSON.stringify({ query: text, lang: "it", sessionId: "somerandomthing" }),
 		
-		success:function(data){
+		success:function(data){//fire apiAiResponse event
 			var evt = new CustomEvent("apiAiResponse", { detail: data });
 			document.body.dispatchEvent(evt);
 		},
@@ -103,29 +103,29 @@ function apiAiQuery(recognizedText) {
 	});
 }
 
-function setResponse(val) {
-	// myLog(val);
-	if(val.result.actionIncomplete){
-		conversationRunning = true;
-	}
-	if(val.result.action=="change_color"){
-		if(val.result.parameters.Shapes != "")
-			selectedShapeID = val.result.parameters.Shapes;
-		myLog("selected Shape: "+selectedShapeID);
-		if(val.result.parameters.color != "")
-			selectedColor = val.result.parameters.color;
-		myLog("selected Color: "+selectedColor);
-		if(selectedShapeID!="" && selectedColor!=""){ //actually update the shape's color
-			var selectedElement = document.getElementById(selectedShapeID);
-			console.log(selectedElement);
-			myLog("changing "+selectedShapeID+" color to "+selectedColor);
-			selectedElement.setAttribute("color",selectedColor);
+// function setResponse(val) {
+	// // myLog(val);
+	// if(val.result.actionIncomplete){
+		// conversationRunning = true;
+	// }
+	// if(val.result.action=="change_color"){
+		// if(val.result.parameters.Shapes != "")
+			// selectedShapeID = val.result.parameters.Shapes;
+		// myLog("selected Shape: "+selectedShapeID);
+		// if(val.result.parameters.color != "")
+			// selectedColor = val.result.parameters.color;
+		// myLog("selected Color: "+selectedColor);
+		// if(selectedShapeID!="" && selectedColor!=""){ //actually update the shape's color
+			// var selectedElement = document.getElementById(selectedShapeID);
+			// console.log(selectedElement);
+			// myLog("changing "+selectedShapeID+" color to "+selectedColor);
+			// selectedElement.setAttribute("color",selectedColor);
 			
-			selectedColor="";
-			selectedShapeID="";
-		}	
-	}
-}
+			// selectedColor="";
+			// selectedShapeID="";
+		// }	
+	// }
+// }
 
 //*************** SPEECH SYNTHESIS ********************
 function tts(text){

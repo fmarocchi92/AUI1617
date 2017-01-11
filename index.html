@@ -17,11 +17,14 @@
 		<!-- 3D model -->
       <a-assets>
 		<a-asset-item id="myPlyModel" src="components/scene-demo.bake.ply"></a-asset-item>
-      </a-assets>	
+		<a-asset-item id="umbrellaModel" src="components/umbrella.bake.ply"></a-asset-item>
+      </a-assets>
 	  
 		
 		<!--Scene model-->
 		<a-entity ply-model="src: #myPlyModel" rotation="-90 0 0" position="0 0 0" scale="0.5 0.5 0.5"></a-entity>
+		<a-entity id="umbrella" ply-model="src: #umbrellaModel" rotation="-90 0 0" position="0 1 -2" scale="0.03 0.03 0.03"
+			data-interactive="true" start-recognition></a-entity>
 	    	<!-- Sphere -->
 	    	<!--  template="src: #link" -->
 	    	<!-- <a-entity id="sphere" cursor-listener geometry="primitive: sphere; depth: 2"
