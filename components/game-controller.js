@@ -53,16 +53,14 @@ function start(){
 							myLog("Speech Synthesis Error: "+e);
 						}
 						,function(){ //restart recognition after tts ends if we're in the middle of a conversation
-							if(!recognitionRunning)
-								recognition.start();
+							startRecognition();
 						}
 					);
 				}else if(e.detail.result.action == "finding_object"){
 					state = states.SEARCHING;
 					objectiveId = e.detail.result.parameters.object_id;
 				}else{
-					if(!recognitionRunning)
-						recognition.start();
+					startRecognition();
 				}
 			}
 		);
@@ -75,8 +73,7 @@ function start(){
 			myLog("Speech Synthesis Error: "+e);
 		}
 		,function(){ //restart recognition after tts ends if we're in the middle of a conversation
-			if(!recognitionRunning)
-				recognition.start();
+			startRecognition();
 		}
 	);
 
@@ -89,7 +86,7 @@ AFRAME.registerComponent('start-recognition', {
 		var id = this.el.getAttribute("id");
 		this.el.addEventListener("click",function(){
 			currentObjectId = id;
-			recognition.start();
+			startRecognition();
 			myLog("looking at "+currentObjectId+" , trying to find "+objectiveId);
 		});
 	}

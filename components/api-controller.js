@@ -140,7 +140,7 @@ function tts(text){
 		},
 		function(){ //restart recognition after tts ends if we're in the middle of a conversation
 			if(conversationRunning){
-				recognition.start();
+				startRecognition();
 				conversationRunning = false;
 			}
 		});
@@ -156,6 +156,11 @@ function speak(text, errorCallback, endCallback) {
     u.onerror = errorCallback;
 	
     speechSynthesis.speak(u);
+}
+
+function startRecognition(){
+	if(!recognitionRunning)
+		recognition.start();
 }
 
 function myLog(text){
