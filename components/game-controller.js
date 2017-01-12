@@ -14,7 +14,7 @@ var state = states.BEGIN;
 var readingClue=false;
 var objectiveId="";
 var currentObjectId="";
-
+var timeoutAnswer = 13;
 function start(){
 	
 	document.body.addEventListener("textRecognized", function (e) {//in case we need to do something before calling api.ai
@@ -54,6 +54,11 @@ function start(){
 						}
 						,function(){ //restart recognition after tts ends if we're in the middle of a conversation
 							startRecognition();
+							setTimeout(function(){
+									if(state == states.ANSWERING || !recognitionRunning)
+										apiAiQuery("suggest:1"); 
+								}
+								, timeoutAnswer*1000);
 						}
 					);
 				}else if(e.detail.result.action == "finding_object"){

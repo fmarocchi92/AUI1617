@@ -16,13 +16,13 @@
 		<!-- 3D model -->
       <a-assets>
 		<a-asset-item id="myPlyModel" src="components/scene-demo.bake.ply"></a-asset-item>
-		<a-asset-item id="umbrellaModel" src="components/umbrella.bake.ply"></a-asset-item>
+		<a-asset-item id="umbrellaModel" src="components/umbrella2.mc.ply"></a-asset-item>
       </a-assets>
 	  
 		
 		<!--Scene model-->
 		<a-entity ply-model="src: #myPlyModel" rotation="-90 0 0" position="0 0 0" scale="0.5 0.5 0.5"></a-entity>
-		<a-entity id="umbrella" ply-model="src: #umbrellaModel" rotation="-90 0 0" position="0 1 -2" scale="0.03 0.03 0.03"
+		<a-entity id="umbrella" ply-model="src: #umbrellaModel" rotation="-40 90 0" position="0 1 -2" scale="0.03 0.03 0.03"
 			data-interactive="true" start-recognition></a-entity>
 	    	<!-- Sphere -->
 	    	<!--  template="src: #link" -->
@@ -41,7 +41,7 @@
 			
 			<a-box id="cube" size="2 2 2" position="1 1 3" color="blue"  data-interactive="true" start-recognition></a-box>
 			
-			<a-cone id="pyramid" color="tomato" radius-bottom="1" radius-top="0" height="2" position ="4 1 3 "  data-interactive="true" start-recognition></a-cone>
+			<a-cone id="pyramid" color="tomato" radius-bottom="0.5" radius-top="0" height="1" position ="-2 1 -3.5 "  data-interactive="true" start-recognition></a-cone>
 
 	   
 	    <!-- New Camera Settings -->
