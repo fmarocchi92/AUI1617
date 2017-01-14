@@ -21,9 +21,9 @@ function start(){
 		myLog("Recognized: " + e.detail);
 		e.stopPropagation();
 		if(state == states.SEARCHING && currentObjectId != objectiveId)
-			apiAiQuery("NOPE");		//TODO handle looking at the wrong object
+			apiAiQuery("NOPE", "");		//TODO handle looking at the wrong object
 		else 
-			apiAiQuery(e.detail);
+			apiAiQuery(e.detail, "prova");
     }, false);
 	
 	document.body.addEventListener("apiAiResponse", function(e){
@@ -56,7 +56,7 @@ function start(){
 							startRecognition();
 							setTimeout(function(){
 									if(state == states.ANSWERING || !recognitionRunning)
-										apiAiQuery("suggest:1"); 
+										apiAiQuery("suggest:1",""); 
 								}
 								, timeoutAnswer*1000);
 						}

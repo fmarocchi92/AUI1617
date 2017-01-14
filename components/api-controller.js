@@ -10,6 +10,7 @@ var selectedShapeID="";
 var selectedColor="";
 var recognitionRunning = false;
 var conversationRunning = false;
+var apiSessionId = Math.random().toString(36).replace(/[^a-z]+/g, '');
 
 var startRecCallback = function(){
 		onStartRecognition();
@@ -81,7 +82,7 @@ function onRecognitionResult(event){
 }
 
 //send a query to api.ai to obtain the relevant features of the recognized text
-function apiAiQuery(recognizedText) {
+function apiAiQuery(recognizedText, newContext) {
 	var text = recognizedText;
 	$.ajax({
 		type: "POST",
@@ -91,7 +92,13 @@ function apiAiQuery(recognizedText) {
 		headers: {
 			"Authorization": "Bearer " + accessToken
 		},
-		data: JSON.stringify({ query: text, lang: "it", sessionId: "somerandomthing" }),
+		data: JSON.stringify({ query: text, 
+								contexts: [{
+									name: newContext,
+									lifespan: 3
+								}], 
+								lang: "it", 
+								sessionId: apiSessionId }),
 		
 		success:function(data){//fire apiAiResponse event
 			var evt = new CustomEvent("apiAiResponse", { detail: data });
@@ -151,7 +158,9 @@ function speak(text, errorCallback, endCallback) {
     var u = new SpeechSynthesisUtterance();
     u.text = text;
     u.lang = language;
-	
+	u.volume = 1; // 0 to 1
+	u.rate = 1; // 0.1 to 10
+	u.pitch = 1; //0 to 2
 	u.onend = endCallback;
     u.onerror = errorCallback;
 	
