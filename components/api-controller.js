@@ -154,7 +154,7 @@ function tts(text){
 }
 
 // TTS functionality
-function speak(text, errorCallback, endCallback) {
+function speak(text, endCallback) {
     var u = new SpeechSynthesisUtterance();
     u.text = text;
     u.lang = language;
@@ -162,7 +162,9 @@ function speak(text, errorCallback, endCallback) {
 	u.rate = 1; // 0.1 to 10
 	u.pitch = 1; //0 to 2
 	u.onend = endCallback;
-    u.onerror = errorCallback;
+    u.onerror = function(e){
+		myLog("Speech Synthesis Error: "+e);
+	};
 	
     speechSynthesis.speak(u);
 }

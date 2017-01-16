@@ -5,86 +5,149 @@ $(document).ready(function(){
 	});
 
 var states = {
-    BEGIN : "begin",
+	BEGIN : "begin",
+	WELCOME : "welcome",
+	READ_CHECK : "read_check",
+	READY : "ready",
+	GETTING_CLUE: "getting_clue",
+	READING : "reading",
     ANSWERING : "answering",
-    SEARCHING : "searching"
+	ASKING_SUGGESTION: "suggestion",
+    SEARCHING : "searching",
+	END : "end"
 }
 var state = states.BEGIN;
+var objectsIDs = [
+	"umbrella",
+	"washingmachine",
+	"cube"
+]
 
-var readingClue=false;
-var objectiveId="";
+var objectiveIndex = 0;
 var currentObjectId="";
 var timeoutAnswer = 13;
+var readingChild = false;
+var context = "";
+
 function start(){
 	
 	document.body.addEventListener("textRecognized", function (e) {//in case we need to do something before calling api.ai
 		myLog("Recognized: " + e.detail);
 		e.stopPropagation();
-		if(state == states.SEARCHING && currentObjectId != objectiveId)
-			apiAiQuery("NOPE", "");		//TODO handle looking at the wrong object
-		else 
-			apiAiQuery(e.detail, "prova");
+		
+		if(state == states.BEGIN)
+			context = "";
+		else
+			context = objectsIDs[objectiveIndex];
+		if(state == states.SEARCHING && currentObjectId != objectsIDs[objectiveIndex])
+			apiAiQuery("wrong_object", context);		//TODO handle looking at the wrong object
+		else
+			apiAiQuery(e.detail, context);
     }, false);
 	
 	document.body.addEventListener("apiAiResponse", function(e){
 		console.log("Api.ai response: "+ JSON.stringify(e.detail.result, undefined, 2));
 		//check action,action incomplete and parameters to decide what to do (maybe dispatch some events?)
-
-		var maxLength = 200; // maximum number of characters to extract
-		var trimmedString = e.detail.result.fulfillment.speech;
-		if(trimmedString.length > maxLength){
-			//trim the string to the maximum length
-			var trimmedString = e.detail.result.fulfillment.speech.substr(0, maxLength);
-			//re-trim if we are in the middle of a word
-			trimmedString = trimmedString.substr(0, Math.min(trimmedString.length, trimmedString.lastIndexOf(" ")));
-			myLog("tts: "+e.detail.result.fulfillment.speech);
-			
-		}
-		speak(trimmedString,
-			function(e){
-				myLog("Speech Synthesis Error: "+e);
-			}
-			,function(){ 
-				if(e.detail.result.action == "solving_clue"){//pronounces the clue if there's one
-					myLog(e.detail.result.parameters.clue);
-					state = states.ANSWERING;
-					speak(e.detail.result.parameters.clue,
-						function(e){
-							myLog("Speech Synthesis Error: "+e);
-						}
-						,function(){ //restart recognition after tts ends if we're in the middle of a conversation
-							startRecognition();
-							setTimeout(function(){
-									if(state == states.ANSWERING || !recognitionRunning)
-										apiAiQuery("suggest:1",""); 
-								}
-								, timeoutAnswer*1000);
-						}
-					);
-				}else if(e.detail.result.action == "finding_object"){
-					state = states.SEARCHING;
-					objectiveId = e.detail.result.parameters.object_id;
-				}else{
-					startRecognition();
-				}
-			}
-		);
+		// control(e);
+		myLog("state: "+state);
+		mySpeakFunction(e);
 	},false);
 	
 	//here we should send a request to api.ai and call speak with the answer instead of caling it directly with the string
 	speak(
 		"Ciao!"
-		,function(e){
-			myLog("Speech Synthesis Error: "+e);
-		}
 		,function(){ //restart recognition after tts ends if we're in the middle of a conversation
 			startRecognition();
 		}
 	);
-
 }
 
+function mySpeakFunction(e){
+	var maxLength = 200; // maximum number of characters to extract
+	var trimmedString = e.detail.result.fulfillment.speech;
+	if(trimmedString.length > maxLength){
+		//trim the string to the maximum length
+		var trimmedString = e.detail.result.fulfillment.speech.substr(0, maxLength);
+		//re-trim if we are in the middle of a word
+		trimmedString = trimmedString.substr(0, Math.min(trimmedString.length, trimmedString.lastIndexOf(" ")));
+		myLog("tts: "+e.detail.result.fulfillment.speech);
+	}
+	if(trimmedString.length > 0)
+		speak(trimmedString,
+			function(){ 
+				control(e);
+			}
+		);
+	else
+		control(e);
+}
 
+function control(e){
+	switch (e.detail.result.action){
+	case "can_read":
+		readingChild = e.detail.result.parameters.read;
+		state = states.GETTING_CLUE;
+		context = objectsIDs[objectiveIndex];
+		apiAiQuery("get_clue", context);
+		break;
+	case "get_clue":
+		myLog(e.detail.result.parameters.clue); 
+		//TODO DISPLAY TEXT ON A PIECE OF PAPER
+		if(readingChild){
+			speak(e.detail.result.parameters.can_read,
+				function(){ //wait for the child to read
+					startRecognition();
+					setTimeout(function(){ // ask api.ai to read for the child after a timeout
+							if(state == states.READING || !recognitionRunning){
+								readingChild = false;
+								apiAiQuery("get_clue", context);
+							}
+						}
+						, 2*timeoutAnswer*1000);
+				}
+			);
+			state = states.READING;
+			startRecognition();
+		}else{
+			speak(e.detail.result.parameters.clue,
+			function(){ //wait for the child's answer
+				startRecognition();
+				setTimeout(function(){ // ask api.ai for another suggestion if the child hasn't answered after a timeout
+						if(state == states.ANSWERING || !recognitionRunning)
+							apiAiQuery("suggest:"+suggestionNumber,context); 
+					}
+					, timeoutAnswer*1000);
+				}
+			);
+			state = states.ANSWERING;
+			startRecognition();
+		}
+		break;
+	case "clue_read":
+		state = states.ANSWERING;
+		startRecognition();
+		break;
+	case "finding_object":
+		state = states.SEARCHING;
+		break;
+	case "object_found":
+		objectiveIndex++;
+		if(objectiveIndex >= objectsIDs){
+			//TODO handle end of game
+			apiAiQuery(end_game,"");
+		}
+		break;
+	case "end_game":
+		endGame();
+		break;
+	default:
+		startRecognition();			
+	}
+}
+
+function endGame(){
+	myLog("HAI VINTO");
+}
 
 AFRAME.registerComponent('start-recognition', {
 	init: function () {
@@ -92,8 +155,7 @@ AFRAME.registerComponent('start-recognition', {
 		this.el.addEventListener("click",function(){
 			currentObjectId = id;
 			startRecognition();
-			myLog("looking at "+currentObjectId+" , trying to find "+objectiveId);
+			myLog("looking at "+currentObjectId+" , trying to find "+objectsIDs[objectiveIndex]);
 		});
 	}
 });
-
