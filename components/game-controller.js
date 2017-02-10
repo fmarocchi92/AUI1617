@@ -1,5 +1,6 @@
 //begin recognition at startup
 $(document).ready(function(){
+		
 		enableSpeechAPI();
 		setTimeout(start,15000)
 	});
@@ -17,11 +18,12 @@ var states = {
 	END : "end"
 }
 var state = states.BEGIN;
-var objectsIDs = [
-	"fridge",
-	"umbrella",
-	"lamp"
-];
+var objectsIDs = location.search.substr(1).split("=")[1].split(",");
+// [
+	// "fridge",
+	// "umbrella",
+	// "lamp"
+// ];
 
 var objectiveIndex = 0;
 var currentObjectId="";
@@ -35,7 +37,7 @@ var blinkingTime = 300;
 var debug = true;
 
 function start(){
-	
+	myLog(objectsIDs);
 	document.body.addEventListener("textRecognized", function (e) {//in case we need to do something before calling api.ai
 		myLog("Recognized: " + e.detail);
 		e.stopPropagation();
