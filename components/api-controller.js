@@ -1,4 +1,4 @@
-var accessToken = "28c5fcae820143289464598b76f4967c";
+var accessToken = "f815c6450bff4ab3bcea095edd078fd8";
 var baseUrl = "https://api.api.ai/v1/";
 var recognizedText = "";
 var language = "it"; //"en-US"; 
@@ -95,7 +95,7 @@ function apiAiQuery(recognizedText, newContext) {
 		data: JSON.stringify({ query: text, 
 								contexts: [{
 									name: newContext,
-									lifespan: 3
+									lifespan: 5
 								}], 
 								lang: "it", 
 								sessionId: apiSessionId }),

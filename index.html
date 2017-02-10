@@ -15,7 +15,7 @@
     <a-scene>
 		<!-- 3D model -->
       <a-assets>
-		<a-asset-item id="houseModel" src="components/saln-comedor-nf.bake.ply"></a-asset-item>
+		<a-asset-item id="houseModel" src="components/houseply.ply"></a-asset-item>
 		<a-asset-item id="umbrellaModel" src="components/umbrella2.mc.ply"></a-asset-item>
 		<a-asset-item id="fridgeModel" src="components/fridge.mc.ply"></a-asset-item>
 		<a-asset-item id="chairModel" src="components/chair.mc.ply"></a-asset-item>
@@ -31,6 +31,8 @@
 		<a-entity id="umbrella" ply-model="src:#umbrellaModel" rotation="-40 90 0" position="-2.39 -7.83 -28.19" scale="0.15 0.15 0.15" data-interactive="true" start-recognition=""></a-entity>
 		
 		<a-entity id="lamp" ply-model="src:#lampModel" rotation="-90 0 0" position="-7.59 -3.1 8.28" scale="0.03 0.03 0.03" data-interactive="true" start-recognition=""></a-entity>
+		
+		<a-entity id="chair" ply-model="src:#chairModel" rotation="-90 0 0" position="-7.59 -3.1 8.28" scale="0.03 0.03 0.03" data-interactive="true" start-recognition=""></a-entity>
 			
 		<a-entity id="fridge" ply-model="src:#fridgeModel" rotation="-90 90 0" position="-26.13 -8.3 21" scale="0.2 0.2 0.2" data-interactive="true" start-recognition=""></a-entity>
 		
@@ -76,7 +78,7 @@
 		</a-camera>
 		
 		<!-- Blue skybox -->
-		<a-sky color="#639df9" radius="10000"></a-sky>
+		<a-sky color="#bfe1fc" radius="10000"></a-sky>
 		
     </a-scene>
   </body>

@@ -1,7 +1,7 @@
 //begin recognition at startup
 $(document).ready(function(){
 		enableSpeechAPI();
-		setTimeout(start,3000)
+		setTimeout(start,5000)
 	});
 
 var states = {
@@ -18,16 +18,18 @@ var states = {
 }
 var state = states.BEGIN;
 var objectsIDs = [
-	"umbrella",
+	"lamp",
 	"washingmachine",
-	"cube"
-]
+	"fridge"
+];
 
 var objectiveIndex = 0;
 var currentObjectId="";
 var timeoutAnswer = 13;
 var readingChild = false;
 var context = "";
+
+var debug = true;
 
 function start(){
 	
@@ -65,13 +67,16 @@ function start(){
 function mySpeakFunction(e){
 	var maxLength = 200; // maximum number of characters to extract
 	var trimmedString = e.detail.result.fulfillment.speech;
+	if(debug){
+		trimmedString = "debug";
+	}
 	if(trimmedString.length > maxLength){
 		//trim the string to the maximum length
 		var trimmedString = e.detail.result.fulfillment.speech.substr(0, maxLength);
 		//re-trim if we are in the middle of a word
 		trimmedString = trimmedString.substr(0, Math.min(trimmedString.length, trimmedString.lastIndexOf(" ")));
-		myLog("tts: "+e.detail.result.fulfillment.speech);
 	}
+	myLog("tts: "+e.detail.result.fulfillment.speech);
 	if(trimmedString.length > 0)
 		speak(trimmedString,
 			function(){ 
@@ -85,10 +90,15 @@ function mySpeakFunction(e){
 function control(e){
 	switch (e.detail.result.action){
 	case "can_read":
-		readingChild = e.detail.result.parameters.read;
+		if(e.detail.result.parameters.read == "true")
+			readingChild = true;
+		else
+			readingChild = false;
+		
 		state = states.GETTING_CLUE;
 		context = objectsIDs[objectiveIndex];
 		apiAiQuery("get_clue", context);
+		myLog("get_clue sent: "+context);
 		break;
 	case "get_clue":
 		myLog(e.detail.result.parameters.clue); 
@@ -97,13 +107,13 @@ function control(e){
 			speak(e.detail.result.parameters.can_read,
 				function(){ //wait for the child to read
 					startRecognition();
-					setTimeout(function(){ // ask api.ai to read for the child after a timeout
-							if(state == states.READING || !recognitionRunning){
-								readingChild = false;
-								apiAiQuery("get_clue", context);
-							}
-						}
-						, 2*timeoutAnswer*1000);
+					// setTimeout(function(){ // ask api.ai to read for the child after a timeout
+							// if(state == states.READING || !recognitionRunning){
+								// readingChild = false;
+								// apiAiQuery("get_clue", context);
+							// }
+						// }
+						// , 2*timeoutAnswer*1000);
 				}
 			);
 			state = states.READING;
@@ -112,12 +122,12 @@ function control(e){
 			speak(e.detail.result.parameters.clue,
 			function(){ //wait for the child's answer
 				startRecognition();
-				setTimeout(function(){ // ask api.ai for another suggestion if the child hasn't answered after a timeout
-						if(state == states.ANSWERING || !recognitionRunning)
-							apiAiQuery("suggest:"+suggestionNumber,context); 
-					}
-					, timeoutAnswer*1000);
-				}
+				// setTimeout(function(){ // ask api.ai for another suggestion if the child hasn't answered after a timeout
+						// if(state == states.ANSWERING || !recognitionRunning)
+							// apiAiQuery("suggest:"+suggestionNumber,context); 
+					// }
+					// , timeoutAnswer*1000);
+				// }
 			);
 			state = states.ANSWERING;
 			startRecognition();
@@ -131,10 +141,14 @@ function control(e){
 		state = states.SEARCHING;
 		break;
 	case "object_found":
+		myLog("OBJECT FOUND");
 		objectiveIndex++;
 		if(objectiveIndex >= objectsIDs){
 			//TODO handle end of game
 			apiAiQuery(end_game,"");
+		}else{
+			context = objectsIDs[objectiveIndex];
+			apiAiQuery("get_clue",context);
 		}
 		break;
 	case "end_game":
