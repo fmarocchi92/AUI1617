@@ -41,6 +41,7 @@ function start(){
 			context = "";
 		else
 			context = objectsIDs[objectiveIndex];
+		
 		if(state == states.SEARCHING && currentObjectId != objectsIDs[objectiveIndex])
 			apiAiQuery("wrong_object", context);		//TODO handle looking at the wrong object
 		else
@@ -51,7 +52,7 @@ function start(){
 		console.log("Api.ai response: "+ JSON.stringify(e.detail.result, undefined, 2));
 		//check action,action incomplete and parameters to decide what to do (maybe dispatch some events?)
 		// control(e);
-		myLog("state: "+state);
+		myLog("state: "+state+" current object: "+objectsIDs[objectiveIndex]);
 		mySpeakFunction(e);
 	},false);
 	
@@ -68,7 +69,7 @@ function mySpeakFunction(e){
 	var maxLength = 200; // maximum number of characters to extract
 	var trimmedString = e.detail.result.fulfillment.speech;
 	if(debug){
-		trimmedString = "debug";
+		trimmedString = "prova";
 	}
 	if(trimmedString.length > maxLength){
 		//trim the string to the maximum length
@@ -127,7 +128,7 @@ function control(e){
 							// apiAiQuery("suggest:"+suggestionNumber,context); 
 					// }
 					// , timeoutAnswer*1000);
-				// }
+				 }
 			);
 			state = states.ANSWERING;
 			startRecognition();
