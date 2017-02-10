@@ -27,9 +27,10 @@
 
             <div id='orderingPanel' class='object-container'>
                 <div class='page-header'>
-                    Ordinamento (dal primo all'ultimo oggetto da trovare)
+                    Ordinamento (dal primo all'ultimo oggetto da trovare) <br/>
+                    È possibile ordinare gli oggetti, trascinandoli verso l'alto o verso il basso
                 </div>
-                <ul id='sortableObjects' class='list'>
+                <ul id='sortableObjects' class='ordering-list'>
                 </ul>
             </div>
 
@@ -66,7 +67,7 @@
             $('input.object-checkbox').on('change', function(evt) {
                 if($(this).is(':checked')){
                     // adding object to the list
-                    var newComponent = $("<li class=\"sortableObject\" id=\"sortable"+objectLibrary[$(this).val()]+"\">"+$(this).val()+"</li>");
+                    var newComponent = $("<li class=\"sortableObject ui-state-default\" id=\"sortable"+objectLibrary[$(this).val()]+"\"> <span class=\"ui-icon ui-icon-arrowthick-2-n-s\"></span>"+$(this).val()+"</li>");
                     newComponent.appendTo('#sortableObjects');
                 }
                 else{
