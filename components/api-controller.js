@@ -1,11 +1,11 @@
-var accessToken = "f815c6450bff4ab3bcea095edd078fd8";
+var accessToken = "acbed591258d4dd4a76dd18a1bb69786";
 var baseUrl = "https://api.api.ai/v1/";
 var recognizedText = "";
 var language = "it"; //"en-US"; 
 var recognition;
 var label;
 var log = "";
-var lastLogLine ="stare at a shape and say 'change the color'";
+var lastLogLine ="";
 var selectedShapeID="";
 var selectedColor="";
 var recognitionRunning = false;
