@@ -18,9 +18,9 @@ var states = {
 }
 var state = states.BEGIN;
 var objectsIDs = [
-	"lamp",
-	"washingmachine",
-	"fridge"
+	"fridge",
+	"umbrella",
+	"lamp"
 ];
 
 var objectiveIndex = 0;
@@ -144,9 +144,9 @@ function control(e){
 	case "object_found":
 		myLog("OBJECT FOUND");
 		objectiveIndex++;
-		if(objectiveIndex >= objectsIDs){
+		if(objectiveIndex >= objectsIDs.length){
 			//TODO handle end of game
-			apiAiQuery(end_game,"");
+			apiAiQuery("end_game","");
 		}else{
 			context = objectsIDs[objectiveIndex];
 			apiAiQuery("get_clue",context);

@@ -83,31 +83,55 @@ function onRecognitionResult(event){
 
 //send a query to api.ai to obtain the relevant features of the recognized text
 function apiAiQuery(recognizedText, newContext) {
+	myLog("ApiAiQuery new context: "+newContext);
 	var text = recognizedText;
-	$.ajax({
-		type: "POST",
-		url: baseUrl + "query?v=20150910",
-		contentType: "application/json; charset=utf-8",
-		dataType: "json",
-		headers: {
-			"Authorization": "Bearer " + accessToken
-		},
-		data: JSON.stringify({ query: text, 
-								contexts: [{
-									name: newContext,
-									lifespan: 5
-								}], 
-								lang: "it", 
-								sessionId: apiSessionId }),
-		
-		success:function(data){//fire apiAiResponse event
-			var evt = new CustomEvent("apiAiResponse", { detail: data });
-			document.body.dispatchEvent(evt);
-		},
-		error: function() {
-			myLog("Api.ai error");
-		}
-	});
+	if(newContext == ""){
+		$.ajax({
+			type: "POST",
+			url: baseUrl + "query?v=20150910",
+			contentType: "application/json; charset=utf-8",
+			dataType: "json",
+			headers: {
+				"Authorization": "Bearer " + accessToken
+			},
+			data: JSON.stringify({ query: text,  
+									lang: "it", 
+									sessionId: apiSessionId }),
+			
+			success:function(data){//fire apiAiResponse event
+				var evt = new CustomEvent("apiAiResponse", { detail: data });
+				document.body.dispatchEvent(evt);
+			},
+			error: function() {
+				myLog("Api.ai error");
+			}
+		});
+	}else{
+		$.ajax({
+			type: "POST",
+			url: baseUrl + "query?v=20150910",
+			contentType: "application/json; charset=utf-8",
+			dataType: "json",
+			headers: {
+				"Authorization": "Bearer " + accessToken
+			},
+			data: JSON.stringify({ query: text, 
+									contexts: [{
+										name: newContext,
+										lifespan: 5
+									}], 
+									lang: "it", 
+									sessionId: apiSessionId }),
+			
+			success:function(data){//fire apiAiResponse event
+				var evt = new CustomEvent("apiAiResponse", { detail: data });
+				document.body.dispatchEvent(evt);
+			},
+			error: function() {
+				myLog("Api.ai error");
+			}
+		});
+	}
 }
 
 // function setResponse(val) {
