@@ -1,7 +1,7 @@
 //begin recognition at startup
 $(document).ready(function(){
 		enableSpeechAPI();
-		setTimeout(start,5000)
+		setTimeout(start,15000)
 	});
 
 var states = {
@@ -26,8 +26,11 @@ var objectsIDs = [
 var objectiveIndex = 0;
 var currentObjectId="";
 var timeoutAnswer = 13;
+var timeoutSearch = 3;
 var readingChild = false;
 var context = "";
+var blinkingId;
+var blinkingTime = 300;
 
 var debug = true;
 
@@ -68,7 +71,7 @@ function start(){
 function mySpeakFunction(e){
 	var maxLength = 200; // maximum number of characters to extract
 	var trimmedString = e.detail.result.fulfillment.speech;
-	if(debug){
+	if(debug && trimmedString!=""){
 		trimmedString = "prova";
 	}
 	if(trimmedString.length > maxLength){
@@ -108,13 +111,13 @@ function control(e){
 			speak(e.detail.result.parameters.can_read,
 				function(){ //wait for the child to read
 					startRecognition();
-					// setTimeout(function(){ // ask api.ai to read for the child after a timeout
-							// if(state == states.READING || !recognitionRunning){
-								// readingChild = false;
-								// apiAiQuery("get_clue", context);
-							// }
-						// }
-						// , 2*timeoutAnswer*1000);
+					setTimeout(function(){ // ask api.ai to read for the child after a timeout
+							if(state == states.READING || !recognitionRunning){
+								readingChild = false;
+								apiAiQuery("get_clue", context);
+							}
+						}
+						, 2*timeoutAnswer*1000);
 				}
 			);
 			state = states.READING;
@@ -123,11 +126,15 @@ function control(e){
 			speak(e.detail.result.parameters.clue,
 			function(){ //wait for the child's answer
 				startRecognition();
-				// setTimeout(function(){ // ask api.ai for another suggestion if the child hasn't answered after a timeout
-						// if(state == states.ANSWERING || !recognitionRunning)
-							// apiAiQuery("suggest:"+suggestionNumber,context); 
-					// }
-					// , timeoutAnswer*1000);
+				setTimeout(function(){ // ask api.ai for another suggestion if the child hasn't answered after a timeout
+						if(state == states.ANSWERING && !recognitionRunning)
+							speak(e.detail.result.parameters.suggestion,
+								function(){
+									startRecognition();	
+								}
+							);
+					}
+					, timeoutAnswer*1000);
 				 }
 			);
 			state = states.ANSWERING;
@@ -140,9 +147,22 @@ function control(e){
 		break;
 	case "finding_object":
 		state = states.SEARCHING;
+		setTimeout(function(){ // ask api.ai for another suggestion if the child hasn't answered after a timeout
+						// if(state == states.SEARCHING)
+							//start blinking
+						myLog("Dispatching EVENT START BLINKING");
+							// document.body.dispatchEvent(new CustomEvent("startBlinking"));
+							var object = document.getElementById(objectsIDs[objectiveIndex]);
+							blinkingId = setInterval(function(){blink(object);}, blinkingTime);
+					}
+					, timeoutSearch*1000);
+				
+		
 		break;
 	case "object_found":
 		myLog("OBJECT FOUND");
+		// document.body.dispatchEvent(new Event("stopBlinking"));
+		clearInterval(blinkingId);
 		objectiveIndex++;
 		if(objectiveIndex >= objectsIDs.length){
 			//TODO handle end of game
@@ -158,10 +178,19 @@ function control(e){
 	default:
 		startRecognition();			
 	}
+	myLog("state: "+state);
 }
 
 function endGame(){
 	myLog("HAI VINTO");
+}
+
+function blink(object){
+	myLog("BLINK: "+object.id);//TODO use another type of animation
+	if(object.getAttribute("visible")==true)
+		object.setAttribute("visible",false);
+	else
+		object.setAttribute("visible",true);
 }
 
 AFRAME.registerComponent('start-recognition', {
@@ -171,6 +200,17 @@ AFRAME.registerComponent('start-recognition', {
 			currentObjectId = id;
 			startRecognition();
 			myLog("looking at "+currentObjectId+" , trying to find "+objectsIDs[objectiveIndex]);
+		});
+		var timerId;
+		this.el.addEventListener("startBlinking",function(){
+			myLog("startBlinking");
+			if(objectsIDs[objectiveIndex] == id)
+				timerId = setInterval(blink(this.el), 500);
+			
+		});
+		this.el.addEventListener("stopBlinking",function(){
+			if(objectsIDs[objectiveIndex] == id)
+				clearInterval(timerId);
 		});
 	}
 });

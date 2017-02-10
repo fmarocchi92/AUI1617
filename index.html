@@ -18,7 +18,7 @@
 		<a-asset-item id="houseModel" src="components/houseply.ply"></a-asset-item>
 		<a-asset-item id="umbrellaModel" src="components/umbrella2.mc.ply"></a-asset-item>
 		<a-asset-item id="fridgeModel" src="components/fridge.mc.ply"></a-asset-item>
-		<a-asset-item id="chairModel" src="components/chair.mc.ply"></a-asset-item>
+		<a-asset-item id="chairModel" src="components/chair.ply"></a-asset-item>
 		<a-asset-item id="hangerModel" src="components/hanger.mc.ply"></a-asset-item>
 		<a-asset-item id="lampModel" src="components/lamp.mc.ply"></a-asset-item>
 		<a-asset-item id="washingmachineModel" src="components/washingmachine.mc.ply"></a-asset-item>
@@ -31,8 +31,9 @@
 		<a-entity id="umbrella" ply-model="src:#umbrellaModel" rotation="-40 90 0" position="-2.39 -7.83 -28.19" scale="0.15 0.15 0.15" data-interactive="true" start-recognition=""></a-entity>
 		
 		<a-entity id="lamp" ply-model="src:#lampModel" rotation="-90 0 0" position="-2.29 -3.1 8.28" scale="0.03 0.03 0.03" data-interactive="true" start-recognition="">
-			<!-- <a-animation attribute="visible" delay="0" dur="1000" to="false" repeat="indefinite"></a-animation> -->
-			<!-- <a-animation attribute="visible" delay="1000" dur="1000" to="true" repeat="indefinite"></a-animation> -->
+			<!-- <a-animation begin="startBlinking" end="stopBlinking" attribute="visible" delay="0" dur="300" to="false" repeat="indefinite"></a-animation> -->
+			<!-- <a-animation begin="startBlinking" end="stopBlinking" attribute="visible" delay="300" dur="300" to="true" repeat="indefinite"></a-animation> -->
+			<!-- <a-animation begin="stopBlinking" attribute="visible" delay="0" to="true" repeat="0"></a-animation> -->
 		</a-entity>
 		
 		<a-entity id="chair" ply-model="src:#chairModel" rotation="-90 -19.7 0" position="0.86 -10.15 -0.72" scale="0.5 0.5 0.5" data-interactive="true" start-recognition=""></a-entity>
