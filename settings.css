@@ -1,0 +1,51 @@
+.page-container{
+    width: 60%;
+    margin: 0 auto;
+}
+
+.page-header{
+    text-align: center
+}
+
+.object-container{
+    margin-top: 8%;
+}
+
+.list{
+    margin-top: 5%;
+    margin-left: 43%;
+}
+
+.ordering-list{
+    margin-top: 5%;
+    margin-left: 35%;
+    width: 20%;
+}
+
+.start-button{
+    text-align: center;
+    border-style: solid;
+    border-color: #000000;
+    width: 30%;
+    margin-left: 35%;
+}
+
+.start-button[disabled]{
+    border-color: #ffffff
+}
+
+.start-button:hover[disabled]{
+    border-color: #ffffff;
+    background-color: #ffffff;
+}
+
+.start-button:hover{
+    border-color: #FF0000;
+    background-color: #FFA07A;
+    -o-transition:.5s;
+    -ms-transition:.5s;
+    -moz-transition:.5s;
+    -webkit-transition:.5s;
+    /* ...and now for the proper property */
+    transition:.5s;
+}

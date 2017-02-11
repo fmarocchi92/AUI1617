@@ -1,71 +1,108 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <title>AUI</title>
-    <meta name="description" content="AUI">
-	<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-    <script src="https://rawgit.com/aframevr/aframe/917c06889ee1f3f79b7b1bbd9eab9815f9512503/dist/aframe.min.js"></script>
-	<script src="components/api-controller.js"></script>
-	<script src="components/game-controller.js"></script>
-	<script src="https://rawgit.com/donmccurdy/aframe-extras/v2.1.1/dist/aframe-extras.loaders.min.js"></script>
-	<script src="https://rawgit.com/bryik/aframe-bmfont-text-component/master/dist/aframe-bmfont-text-component.min.js"></script>
-  </head>
-  <body>
-    <a-scene>
-		<!-- 3D model -->
-      <a-assets>
-		<a-asset-item id="houseModel" src="components/houseply.ply"></a-asset-item>
-		<a-asset-item id="umbrellaModel" src="components/umbrella2.mc.ply"></a-asset-item>
-		<a-asset-item id="fridgeModel" src="components/fridge.mc.ply"></a-asset-item>
-		<a-asset-item id="chairModel" src="components/chair.ply"></a-asset-item>
-		<a-asset-item id="hangerModel" src="components/hanger.mc.ply"></a-asset-item>
-		<a-asset-item id="lampModel" src="components/lamp.mc.ply"></a-asset-item>
-		<a-asset-item id="washingmachineModel" src="components/washingmachine.mc.ply"></a-asset-item>
-      </a-assets>
-	  
-		
-		<!--Scene model-->
-		<a-entity id="house" ply-model="src: #houseModel" rotation="-90 0 0" position="0 -10 0" scale="0.5 0.5 0.5"></a-entity>
-		
-		<a-entity id="umbrella" ply-model="src:#umbrellaModel" rotation="-40 90 0" position="-2.39 -7.83 -28.19" scale="0.15 0.15 0.15" data-interactive="true" start-recognition=""></a-entity>
-		
-		<a-entity id="lamp" ply-model="src:#lampModel" rotation="-90 0 0" position="-2.29 -3.1 8.28" scale="0.03 0.03 0.03" data-interactive="true" start-recognition="">
-			<!-- <a-animation begin="startBlinking" end="stopBlinking" attribute="visible" delay="0" dur="300" to="false" repeat="indefinite"></a-animation> -->
-			<!-- <a-animation begin="startBlinking" end="stopBlinking" attribute="visible" delay="300" dur="300" to="true" repeat="indefinite"></a-animation> -->
-			<!-- <a-animation begin="stopBlinking" attribute="visible" delay="0" to="true" repeat="0"></a-animation> -->
-		</a-entity>
-		
-		<a-entity id="chair" ply-model="src:#chairModel" rotation="-90 -19.7 0" position="0.86 -10.15 -0.72" scale="0.5 0.5 0.5" data-interactive="true" start-recognition=""></a-entity>
-			
-		<a-entity id="fridge" ply-model="src:#fridgeModel" rotation="-90 90 0" position="-26.13 -8.3 21" scale="0.2 0.2 0.2" data-interactive="true" start-recognition=""></a-entity>
-		
-		<a-entity id="hanger" ply-model="src:#hangerModel" rotation="-90 0 0" position="27.41 -8.31 26.33" scale="0.15 0.15 0.15" data-interactive="true" start-recognition=""></a-entity>
-			
-		<a-entity id="washingmachine" ply-model="src:#washingmachineModel" rotation="-90 180 0" position="25.27 -8.06 -21.89" scale="0.15 0.15 0.15" data-interactive="true" start-recognition=""></a-entity>
-	    	
-			
-	    <!-- New Camera Settings -->
-	<a-camera id="camera" position="0 8 0">
-			<a-cursor id="cursor" color="#000000"
-				fuse="true"
-				fuse-timeout="2000"
-				objects="[data-interactive='true']"
-				cursor-feedback>
-					<!-- This shrinks the cursor when the fuse click is triggered -->
-					<a-animation begin="click" easing="ease-in" attribute="scale"
-						fill="backwards" from="0.1 0.1 0.1" to="1 1 1" dur="300"></a-animation>
-					<!-- These change the cursor color when it hovers an interactable object -->
-					<a-animation begin="mouseenter" attribute="color" from="#000000" to="#00FF00" dur="0"></a-animation>
-					<a-animation begin="mouseleave" attribute="color" from="#00FF00" to="#000000" dur="0"></a-animation>
-				</a-cursor>
-				<!-- Text Label now always in front of the camera-->
-				<a-entity id="label" bmfont-text="text: stare at a shape and say 'change the color'; color: #333; align:center; lineHeight:30" scale="0.25 0.25 0.25" position="-0.625 -0.3 -0.5"></a-entity>
-		</a-camera>
-		
-		<!-- Blue skybox -->
-		<a-sky color="#bfe1fc" radius="10000"></a-sky>
-		
-    </a-scene>
-  </body>
+    <head>
+        <title> Impostazioni Caccia al Tesoro </title>
+        <script src='config.js'></script>
+        <script src='jquery-3.1.1.js'></script>
+        <script src='jquery-ui-1.12.1.custom/jquery-ui.js'></script>
+        <link rel='stylesheet' href='jquery-ui-1.12.1.custom/jquery-ui.css'>
+        <link rel='stylesheet' href='settings.css'>
+    </head>
+    <body>
+        <div class='page-container'>
+
+            <div class='page-header'>
+                <h3>Impostazioni della caccia al tesoro in Realtà Virtuale</h3>
+                Si possono impostare gli oggetti da cercare nella caccia al tesoro
+            </div>
+
+            <div class='object-container'>
+                <div class='page-header'>
+                    Lista di oggetti selezionabili <br/>
+                    (Selezionare gli oggetti che si vuole cercare nella caccia al tesoro) <br/>
+                </div>
+                <div id='componentList' class='list'>
+                </div>
+            </div>
+
+            <div id='orderingPanel' class='object-container'>
+                <div class='page-header'>
+                    Ordinamento (dal primo all'ultimo oggetto da trovare) <br/>
+                    È possibile ordinare gli oggetti, trascinandoli verso l'alto o verso il basso
+                </div>
+                <ul id='sortableObjects' class='ordering-list'>
+                </ul>
+            </div>
+
+
+            <div class='start-button' id='startButton' disabled='true'>
+                Inizia la Caccia al Tesoro
+            </div>
+
+        </div>
+
+        <script type='text/javascript'>
+
+            // This will make the object list sortable
+            $('#sortableObjects').sortable();
+            $('#sortableObjects').disableSelection();
+
+            // ADDING OBJECTS TO THE OBJECTS LIST
+            for(component in objectLibrary){
+                var newComponent = $("<input id=\""+objectLibrary[component]+"\" class=\"object-checkbox\" type=\"checkbox\" name=\""+objectLibrary[component]+"\" value=\""+component+"\">"+component+"<br>");
+                newComponent.appendTo('#componentList');
+            }
+
+            // CHECK SELECTED OBJECT LIMIT
+            // commented out, since we do not use this for now
+            /*
+            $('input.object-checkbox').on('change', function(evt) {
+               if($(this).siblings(':checked').length >= objectLimit) {
+                   this.checked = false;
+               }
+            });*/
+
+            // When an object is selected, it must be added to the object list
+            // If and object is not selected, it must be removed
+            $('input.object-checkbox').on('change', function(evt) {
+                if($(this).is(':checked')){
+                    // adding object to the list
+                    var newComponent = $("<li class=\"sortableObject ui-state-default\" id=\"sortable"+objectLibrary[$(this).val()]+"\"> <span class=\"ui-icon ui-icon-arrowthick-2-n-s\"></span>"+$(this).val()+"</li>");
+                    newComponent.appendTo('#sortableObjects');
+                }
+                else{
+                    // removing from the list
+                    $("#sortable"+objectLibrary[$(this).val()]).remove()
+                }
+            });
+
+            // Activates / deactivates the start button
+            // Activate it when there is at least one object in the Treasure Hunt
+            $('input.object-checkbox').on('change', function(evt) {
+                if($('input.object-checkbox:checked').length == 0){
+                    // then disable the start button
+                    $('#startButton').attr("disabled", true)
+                }
+                else{
+                    // enable the button
+                    $('#startButton').attr("disabled", false)
+                }
+            });
+
+
+            // Redirect to the Treasure Hunt
+            $('#startButton').on('click', function(evt) {
+                // building parameters
+                if(!$(this).attr('disabled')){
+                    selectedObjectsArray = new Array()
+                    $('#orderingPanel').find('li').each(function(){
+                        var object = $(this)
+                        selectedObjectsArray.push(object.attr('id').replace('sortable', ''))
+                    });
+                    // redirect
+                    window.location="./webapp/webapp.html?objects="+selectedObjectsArray.join(',')
+                }
+            });
+        </script>
+    </body>
 </html>
