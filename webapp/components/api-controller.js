@@ -199,6 +199,10 @@ function startRecognition(){
 }
 
 function myLog(text){
+	if(!debug){
+		console.log(text);
+		return;
+	}
 	console.log(text);
 	log=lastLogLine+"\n"+text;
 	label.setAttribute("bmfont-text","text:"+ log+";color: #333; align:center; lineHeight:30");

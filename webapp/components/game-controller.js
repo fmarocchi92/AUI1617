@@ -36,9 +36,13 @@ var blinkingTime = 200;
 var blinkingElementScale;
 var blinkingScale = 1.02;
 
-var debug = true;
+var debug = false;
+var paperPlane = document.getElementById("paperPlane");
+var textLabel = document.getElementById("label");
 
 function start(){
+	paperPlane = document.getElementById("paperPlane");
+	textLabel = document.getElementById("label");
 	myLog(objectsIDs);
 	document.body.addEventListener("textRecognized", function (e) {//in case we need to do something before calling api.ai
 		myLog("Recognized: " + e.detail);
@@ -110,18 +114,21 @@ function control(e){
 		break;
 	case "get_clue":
 		myLog(e.detail.result.parameters.clue); 
+		showClue(e.detail.result.parameters.clue);
+		
 		//TODO DISPLAY TEXT ON A PIECE OF PAPER
 		if(readingChild){
 			speak(e.detail.result.parameters.can_read,
 				function(){ //wait for the child to read
 					startRecognition();
 					setTimeout(function(){ // ask api.ai to read for the child after a timeout
-							if(state == states.READING || !recognitionRunning){
+							if(state == states.READING && !recognitionRunning){
 								readingChild = false;
+								state=states.GETTING_CLUE;
 								apiAiQuery("get_clue", context);
 							}
 						}
-						, 2*timeoutAnswer*1000);
+						, 1.5*timeoutAnswer*1000);
 				}
 			);
 			state = states.READING;
@@ -145,11 +152,21 @@ function control(e){
 			startRecognition();
 		}
 		break;
-	case "clue_read":
+	case "read_clue":
 		state = states.ANSWERING;
 		startRecognition();
+		setTimeout(function(){ // ask api.ai for another suggestion if the child hasn't answered after a timeout
+						if(state == states.ANSWERING && !recognitionRunning)
+							speak(e.detail.result.parameters.suggestion,
+								function(){
+									startRecognition();	
+								}
+							);
+					}
+					, timeoutAnswer*1000);
 		break;
 	case "finding_object":
+		hideClue();
 		state = states.SEARCHING;
 		setTimeout(function(){ // ask api.ai for another suggestion if the child hasn't answered after a timeout
 						// if(state == states.SEARCHING)
@@ -166,7 +183,7 @@ function control(e){
 		break;
 	case "object_found":
 		myLog("OBJECT FOUND");
-		// document.body.dispatchEvent(new Event("stopBlinking"));
+		//stop the blinking
 		clearInterval(blinkingId);
 		objectiveIndex++;
 		if(objectiveIndex >= objectsIDs.length){
@@ -190,6 +207,22 @@ function endGame(){
 	myLog("HAI VINTO");
 }
 
+function showClue(clue){
+	paperPlane.setAttribute("visible", "true");
+	for( var i=0;i<10;i++){
+		clue = clue.replace(",","\n");
+		clue = clue.replace(".","\n");
+	}
+	textLabel.setAttribute("bmfont-text","text:"+ clue+"; width:600; color: #333; align:center; lineHeight:30");
+	// textLabel.geometry.layout.width=30;
+}
+
+function hideClue(){
+	paperPlane.setAttribute("visible", "false");
+	textLabel.setAttribute("bmfont-text","text: ; width:300; color: #333; align:center; lineHeight:30");
+	// textLabel.layout.width=30;
+}
+
 function blink(object){
 	// myLog("BLINK: "+object.id+"   scale: "+object.getAttribute("scale"));//TODO use another type of animation
 	if(object.getAttribute("scale").x==blinkingElementScale.x){
@@ -207,16 +240,5 @@ AFRAME.registerComponent('start-recognition', {
 			startRecognition();
 			myLog("looking at "+currentObjectId+" , trying to find "+objectsIDs[objectiveIndex]);
 		});
-		// var timerId;
-		// this.el.addEventListener("startBlinking",function(){
-			// myLog("startBlinking");
-			// if(objectsIDs[objectiveIndex] == id)
-				// timerId = setInterval(blink(this.el), 500);
-			
-		// });
-		// this.el.addEventListener("stopBlinking",function(){
-			// if(objectsIDs[objectiveIndex] == id)
-				// clearInterval(timerId);
-		// });
 	}
 });
