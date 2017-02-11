@@ -20,16 +20,16 @@
 
 .ordering-list{
     margin-top: 5%;
-    margin-left: 35%;
-    width: 20%;
+    margin-left: 30%;
+    width: 30%;
 }
 
 .start-button{
     text-align: center;
     border-style: solid;
     border-color: #000000;
-    width: 30%;
-    margin-left: 35%;
+    width: 40%;
+    margin-left: 30%;
 }
 
 .start-button[disabled]{
