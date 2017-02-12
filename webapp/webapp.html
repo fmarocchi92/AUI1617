@@ -23,7 +23,8 @@
 		<a-asset-item id="lampModel" src="components/lamp.mc.ply"></a-asset-item>
 		<a-asset-item id="washingmachineModel" src="components/washingmachine.mc.ply"></a-asset-item>
 		<a-asset-item id="speechActivatorModel" src="components/frame.ply"></a-asset-item>
-		
+		<img id="talkImg" src="components/talk.png">
+		<img id="dontTalkImg" src="components/dontTalk.png">
       </a-assets>
 	  
 		
@@ -67,6 +68,9 @@
 				 <a-plane id="paperPlane" color="#fcf6cf" height="0.8" width="1" position="-0 -0.45 -1" visible="false" shader="flat">
 						<a-entity id="label" bmfont-text="text: ; width:500%; color: #333; align:center; lineHeight:30" scale="0.25 0.25 0.25" position="-0.4 0.1 0.01" ></a-entity>
 				 </a-plane>
+				 
+				 <a-image id="talk" src="#talkImg" position="0 -0.3 -0.5" scale="0.1 0.06 0.1" visible="false"></a-image>
+				 <a-image id="dontTalk" src="#dontTalkImg" position="0 -0.3 -0.5" scale="0.15 0.07 0.1"></a-image>
 				
 		</a-camera>
 		

@@ -12,6 +12,8 @@ var recognitionRunning = false;
 var conversationRunning = false;
 var apiSessionId = Math.random().toString(36).replace(/[^a-z]+/g, '');
 var speechActivator;
+var talkImg;
+var dontTalkImg;
 
 var startRecCallback = function(){
 		onStartRecognition();
@@ -36,7 +38,9 @@ function init () {
 	//add listener to body to update label text according to the recognized text
 	//(apparently if I add the listener directly to the label it doesn't capture events)
 	label = document.getElementById("label");
-	 speechActivator = document.getElementById("speechActivator");
+	speechActivator = document.getElementById("speechActivator");
+	talkImg = document.getElementById("talk");
+	dontTalkImg = document.getElementById("dontTalk")
 	// document.body.addEventListener("textRecognized", function (e) {
 		// myLog("Recognized:" + e.detail);
 		// label.setAttribute("bmfont-text","text:"+e.detail);
@@ -63,12 +67,16 @@ function initRecognition() {
 function onStartRecognition(){
 	myLog("start recognition");
 	recognitionRunning = true;
+	talkImg.setAttribute("visible","true");
+	dontTalkImg.setAttribute("visible", "false");
 	speechActivator.setAttribute("material","color:#71ed7a;shader:flat");
 }
 
 function onEndRecognition(){
 	myLog("end of recognition");
 	recognitionRunning = false;
+	talkImg.setAttribute("visible","false");
+	dontTalkImg.setAttribute("visible", "true");
 	speechActivator.setAttribute("material","color:#e23d3d;shader:flat");
 }
 
