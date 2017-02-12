@@ -11,6 +11,7 @@ var selectedColor="";
 var recognitionRunning = false;
 var conversationRunning = false;
 var apiSessionId = Math.random().toString(36).replace(/[^a-z]+/g, '');
+var speechActivator;
 
 var startRecCallback = function(){
 		onStartRecognition();
@@ -35,6 +36,7 @@ function init () {
 	//add listener to body to update label text according to the recognized text
 	//(apparently if I add the listener directly to the label it doesn't capture events)
 	label = document.getElementById("label");
+	 speechActivator = document.getElementById("speechActivator");
 	// document.body.addEventListener("textRecognized", function (e) {
 		// myLog("Recognized:" + e.detail);
 		// label.setAttribute("bmfont-text","text:"+e.detail);
@@ -61,11 +63,13 @@ function initRecognition() {
 function onStartRecognition(){
 	myLog("start recognition");
 	recognitionRunning = true;
+	speechActivator.setAttribute("material","color:#71ed7a;shader:flat");
 }
 
 function onEndRecognition(){
 	myLog("end of recognition");
 	recognitionRunning = false;
+	speechActivator.setAttribute("material","color:#e23d3d;shader:flat");
 }
 
 function onRecognitionResult(event){
