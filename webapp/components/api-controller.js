@@ -138,30 +138,6 @@ function apiAiQuery(recognizedText, newContext) {
 	}
 }
 
-// function setResponse(val) {
-	// // myLog(val);
-	// if(val.result.actionIncomplete){
-		// conversationRunning = true;
-	// }
-	// if(val.result.action=="change_color"){
-		// if(val.result.parameters.Shapes != "")
-			// selectedShapeID = val.result.parameters.Shapes;
-		// myLog("selected Shape: "+selectedShapeID);
-		// if(val.result.parameters.color != "")
-			// selectedColor = val.result.parameters.color;
-		// myLog("selected Color: "+selectedColor);
-		// if(selectedShapeID!="" && selectedColor!=""){ //actually update the shape's color
-			// var selectedElement = document.getElementById(selectedShapeID);
-			// console.log(selectedElement);
-			// myLog("changing "+selectedShapeID+" color to "+selectedColor);
-			// selectedElement.setAttribute("color",selectedColor);
-			
-			// selectedColor="";
-			// selectedShapeID="";
-		// }	
-	// }
-// }
-
 //*************** SPEECH SYNTHESIS ********************
 function tts(text){
 	if(tts=="")

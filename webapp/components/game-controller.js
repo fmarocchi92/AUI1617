@@ -205,6 +205,8 @@ function control(e){
 
 function endGame(){
 	myLog("HAI VINTO");
+	// redirect
+    window.location="../index.html";
 }
 
 function showClue(clue){
