@@ -19,11 +19,6 @@ var states = {
 }
 var state = states.BEGIN;
 var objectsIDs = location.search.substr(1).split("=")[1].split(",");
-// [
-	// "fridge",
-	// "umbrella",
-	// "lamp"
-// ];
 
 var objectiveIndex = 0;
 var currentObjectId="";
@@ -37,8 +32,16 @@ var blinkingElementScale;
 var blinkingScale = 1.02;
 
 var debug = false;
-var paperPlane = document.getElementById("paperPlane");
-var textLabel = document.getElementById("label");
+var paperPlane;
+var textLabel;
+
+var answeringTimes = {};
+var searchingTimes = {};
+var idToObjectName = {"hanger":"appendiabiti","fridge":"frigorifero","washingmachine":"lavatrice","lamp":"lampada","umbrella":"ombrello","chair":"sedia","tv":"tv"};
+// associativeArray["one"] = "First";
+// associativeArray["two"] = "Second";
+// associativeArray["three"] = "Third";
+var timeInit;
 
 function start(){
 	paperPlane = document.getElementById("paperPlane");
@@ -64,6 +67,7 @@ function start(){
 		//check action,action incomplete and parameters to decide what to do (maybe dispatch some events?)
 		// control(e);
 		myLog("state: "+state+" current object: "+objectsIDs[objectiveIndex]);
+		timeControls(e);
 		mySpeakFunction(e);
 	},false);
 	
@@ -97,6 +101,19 @@ function mySpeakFunction(e){
 		);
 	else
 		control(e);
+}
+
+function timeControls(e){
+	switch (e.detail.result.action){
+		case "finding_object":
+		answeringTimes[objectsIDs[objectiveIndex]]=new Date().getTime() - timeInit;
+		break;
+		case "object_found":
+		searchingTimes[objectsIDs[objectiveIndex]]=new Date().getTime() - timeInit;
+		break;
+		default:
+		break;
+	}
 }
 
 function control(e){
@@ -136,6 +153,8 @@ function control(e){
 		}else{
 			speak(e.detail.result.parameters.clue,
 			function(){ //wait for the child's answer
+				timeInit = new Date().getTime();
+				myLog("TIME: "+timeInit);
 				startRecognition();
 				setTimeout(function(){ // ask api.ai for another suggestion if the child hasn't answered after a timeout
 						if(state == states.ANSWERING && !recognitionRunning)
@@ -153,6 +172,8 @@ function control(e){
 		}
 		break;
 	case "read_clue":
+		timeInit = new Date().getTime();
+		myLog("TIME: "+timeInit);
 		state = states.ANSWERING;
 		startRecognition();
 		setTimeout(function(){ // ask api.ai for another suggestion if the child hasn't answered after a timeout
@@ -166,13 +187,13 @@ function control(e){
 					, timeoutAnswer*1000);
 		break;
 	case "finding_object":
+		timeInit = new Date().getTime();
+		myLog("TIME: "+timeInit);
 		hideClue();
 		state = states.SEARCHING;
 		setTimeout(function(){ // ask api.ai for another suggestion if the child hasn't answered after a timeout
 						// if(state == states.SEARCHING)
 							//start blinking
-						myLog("Dispatching EVENT START BLINKING");
-							// document.body.dispatchEvent(new CustomEvent("startBlinking"));
 							var object = document.getElementById(objectsIDs[objectiveIndex]);
 							blinkingElementScale = object.getAttribute("scale");
 							blinkingId = setInterval(function(){blink(object);}, blinkingTime);
@@ -182,12 +203,12 @@ function control(e){
 		
 		break;
 	case "object_found":
-		myLog("OBJECT FOUND");
+		myLog("OBJECT FOUND in "+searchingTimes[objectsIDs[objectiveIndex]]);
+		myLog("TIME: "+timeInit);
 		//stop the blinking
 		clearInterval(blinkingId);
 		objectiveIndex++;
 		if(objectiveIndex >= objectsIDs.length){
-			//TODO handle end of game
 			apiAiQuery("end_game","");
 		}else{
 			context = objectsIDs[objectiveIndex];
@@ -205,8 +226,12 @@ function control(e){
 
 function endGame(){
 	myLog("HAI VINTO");
+	//print times
+    for(obj in objectsIDs){
+		myLog(idToObjectName[objectsIDs[obj]]+": tempo per la risposta "+answeringTimes[objectsIDs[obj]]+" , tempo per la ricerca "+searchingTimes[objectsIDs[obj]]);
+	}
 	// redirect
-    window.location="../index.html";
+	window.location="../index.html";
 }
 
 function showClue(clue){
