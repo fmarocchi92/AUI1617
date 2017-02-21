@@ -4,7 +4,6 @@ var objectLibrary = {
     'Appendiabiti': 'hanger',
     'Ombrello': 'umbrella',
     'Televisione': 'tv',
-    'Sedia': 'chair',
     'Lavatrice': 'washingmachine'
 };
 
