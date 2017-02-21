@@ -149,7 +149,7 @@ function control(e){
 				}
 			);
 			state = states.READING;
-			startRecognition();
+			// startRecognition();
 		}else{
 			speak(e.detail.result.parameters.clue,
 			function(){ //wait for the child's answer
@@ -168,7 +168,7 @@ function control(e){
 				 }
 			);
 			state = states.ANSWERING;
-			startRecognition();
+			// startRecognition();
 		}
 		break;
 	case "read_clue":
@@ -240,6 +240,7 @@ function showClue(clue){
 		clue = clue.replace(",","\n");
 		clue = clue.replace(".","\n");
 	}
+	clue = removeAccents(clue);
 	textLabel.setAttribute("bmfont-text","text:"+ clue+"; width:600; color: #333; align:center; lineHeight:30");
 	// textLabel.geometry.layout.width=30;
 }
@@ -257,6 +258,23 @@ function blink(object){
 	}else{
 		object.setAttribute("scale", blinkingElementScale);
 	}
+}
+
+function removeAccents(text) {
+    var acentos = "ÃÀÁÄÂÈÉËÊÌÍÏÎÒÓÖÔÙÚÜÛãàáäâèéëêìíïîòóöôùúüûÑñÇç";
+    var original = "AAAAAEEEEIIIIOOOOUUUUaaaaaeeeeiiiioooouuuunncc";
+    for (var i=0; i<acentos.length; i++) {
+        text = text.replace(acentos.charAt(i), original.charAt(i));
+    }
+	// text = text.replace("è","&egrave;");
+	// text = text.replace("ò","&ograve;");
+	// text = text.replace("ì","&igrave;");
+	// text = text.replace("à","&agrave;");
+	// text = text.replace("è","&eacute;");
+	// text = text.replace("ò","&oacute;");
+	// text = text.replace("ì","&iacute;");
+	// text = text.replace("à","&aacute;");
+    return text;
 }
 
 AFRAME.registerComponent('start-recognition', {

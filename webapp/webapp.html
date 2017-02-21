@@ -23,6 +23,9 @@
 		<a-asset-item id="lampModel" src="components/lamp.mc.ply"></a-asset-item>
 		<a-asset-item id="washingmachineModel" src="components/washingmachine.mc.ply"></a-asset-item>
 		<a-asset-item id="speechActivatorModel" src="components/frame.ply"></a-asset-item>
+		<a-asset-item id="tvModel" src="components/tv.ply"></a-asset-item>
+		<a-asset-item id="stereoModel" src="components/music.mc.ply"></a-asset-item>
+		
 		<img id="talkImg" src="components/talk.png">
 		<img id="dontTalkImg" src="components/dontTalk.png">
       </a-assets>
@@ -34,6 +37,10 @@
 		<a-entity id="speechActivator" ply-model="src:#speechActivatorModel" rotation="-90 0 0" position="-0.7 12.72 0.13" scale="1.37 1.39 1" data-interactive="true" start-recognition=""></a-entity>
 		
 		<a-entity id="umbrella" ply-model="src:#umbrellaModel" rotation="-40 90 0" position="-2.39 -7.83 -28.19" scale="0.15 0.15 0.15" data-interactive="true" start-recognition=""></a-entity>
+		
+		<a-entity id="stereo" ply-model="src:#stereoModel" rotation="-90 0 0" position="13.35 -7.83 -23.23" scale="0.1 0.1 0.1"></a-entity>
+		
+		<a-entity id="tv" ply-model="src:#tvModel" rotation="-90 0 0" position="-0.04 -7.83 -1.4" scale="0.5 0.5 0.5" data-interactive="true" start-recognition=""></a-entity>
 		
 		<a-entity id="lamp" ply-model="src:#lampModel" rotation="-90 0 0" position="-2.29 -3.1 8.28" scale="0.03 0.03 0.03" data-interactive="true" start-recognition="">
 			<!-- <a-animation begin="startBlinking" end="stopBlinking" attribute="visible" delay="0" dur="300" to="false" repeat="indefinite"></a-animation> -->
