@@ -218,6 +218,9 @@ function control(e){
 	case "end_game":
 		endGame();
 		break;
+	case "decline":
+		endGame();
+		break;
 	default:
 		startRecognition();			
 	}
@@ -225,7 +228,7 @@ function control(e){
 }
 
 function endGame(){
-	myLog("HAI VINTO");
+	myLog("FINE");
 	//print times
     for(obj in objectsIDs){
 		myLog(idToObjectName[objectsIDs[obj]]+": tempo per la risposta "+answeringTimes[objectsIDs[obj]]+" , tempo per la ricerca "+searchingTimes[objectsIDs[obj]]);
