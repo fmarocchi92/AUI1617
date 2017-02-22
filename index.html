@@ -50,7 +50,7 @@
 
             // ADDING OBJECTS TO THE OBJECTS LIST
             for(component in objectLibrary){
-                var newComponent = $("<input id=\""+objectLibrary[component]+"\" class=\"object-checkbox\" type=\"checkbox\" name=\""+objectLibrary[component]+"\" value=\""+component+"\">"+component+"<br>");
+                var newComponent = $("<input id=\""+objectLibrary[component]+"\" class=\"object-checkbox\" type=\"checkbox\" name=\""+objectLibrary[component]+"\" value=\""+component+"\"><label class=\"checkboxtext\">"+component+"</label><br>");
                 newComponent.appendTo('#componentList');
             }
 
@@ -68,7 +68,7 @@
             $('input.object-checkbox').on('change', function(evt) {
                 if($(this).is(':checked')){
                     // adding object to the list
-                    var newComponent = $("<li class=\"sortableObject ui-state-default\" id=\"sortable"+objectLibrary[$(this).val()]+"\"> <span class=\"ui-icon ui-icon-arrowthick-2-n-s\"></span>"+$(this).val()+"</li>");
+                    var newComponent = $("<li class=\"sortableObject ui-state-default\" id=\"sortable"+objectLibrary[$(this).val()]+"\"> <span class=\"ui-icon ui-icon-arrowthick-2-n-s checkboxtext\"></span>"+$(this).val()+"</li>");
                     newComponent.appendTo('#sortableObjects');
                 }
                 else{
