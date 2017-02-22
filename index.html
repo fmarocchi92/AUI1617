@@ -103,7 +103,7 @@
                 // building parameters
                 if(!$(this).attr('disabled')){
                     selectedObjectsArray = new Array()
-                    $('#orderingPanel').find('li').each(function(){
+                    $('#sortableObjects').find('li').each(function(){
                         var object = $(this)
                         selectedObjectsArray.push(object.attr('id').replace('sortable', ''))
                     });
