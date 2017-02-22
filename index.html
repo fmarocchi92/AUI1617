@@ -12,32 +12,42 @@
     <body>
         <div class='page-container'>
 
-            <div class='page-header'>
-                <h3>Impostazioni della caccia al tesoro in Realt&agrave; Virtuale</h3>
-                Si possono impostare gli oggetti da cercare nella caccia al tesoro
-            </div>
-
-            <div class='object-container'>
-                <div class='page-header'>
-                    Lista di oggetti selezionabili <br/>
-                    (Selezionare gli oggetti che si vuole cercare nella caccia al tesoro) <br/>
-                </div>
-                <div id='componentList' class='list'>
+            <div class='header'>
+                <div class='container'>
+                    <div class='header-heading'>
+                        <h1>Impostazioni della caccia al tesoro in Realt&agrave; Virtuale</h1>
+                        <h3>Selezionare gli oggetti e il loro ordine</h3>
+                    </div>
                 </div>
             </div>
 
-            <div id='orderingPanel' class='object-container'>
-                <div class='page-header'>
-                    Ordinamento (dal primo all'ultimo oggetto da trovare) <br/>
-                    &Egrave; possibile ordinare gli oggetti, trascinandoli verso l'alto o verso il basso
+            <div class='content'>
+                <div class='container'>
+                    <div class='main'>
+                        <h1>Oggetti Selezionabili</h1>
+                        <hr>
+                        <p> Selezionare gli oggetti che si vuole cercare nella caccia al tesoro </p>
+                        <div id='componentList' class='list'>
+                        </div>
+                    </div>
+                    <div class='aside'>
+                        <h1>Ordinamento</h1>
+                        <hr>
+                        (dal primo all'ultimo oggetto da trovare) <br/>
+                        &Egrave; possibile ordinare gli oggetti, trascinandoli verso l'alto o verso il basso
+                        <ul id='sortableObjects' class='ordering-list'>
+                        </ul>
+                    </div>
                 </div>
-                <ul id='sortableObjects' class='ordering-list'>
-                </ul>
+                        
             </div>
 
-
-            <div class='start-button' id='startButton' disabled='true'>
-                Inizia la Caccia al Tesoro
+            <div class='footer'>
+                <div class='container'>
+                    <div class='start-button' id='startButton' disabled='true'>
+                            Inizia la Caccia al Tesoro
+                    </div>
+                </div>
             </div>
 
         </div>
@@ -50,7 +60,7 @@
 
             // ADDING OBJECTS TO THE OBJECTS LIST
             for(component in objectLibrary){
-                var newComponent = $("<input id=\""+objectLibrary[component]+"\" class=\"object-checkbox\" type=\"checkbox\" name=\""+objectLibrary[component]+"\" value=\""+component+"\"><label class=\"checkboxtext\">"+component+"</label><br>");
+                var newComponent = $("<input id=\""+objectLibrary[component]+"\" class=\"object-checkbox\" type=\"checkbox\" name=\""+objectLibrary[component]+"\" value=\""+component+"\"><label class=\"checkboxtext\"> - "+component+"</label><br>");
                 newComponent.appendTo('#componentList');
             }
 
