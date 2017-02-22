@@ -256,17 +256,17 @@ input[type=checkbox]{
 }
 
 .start-button[disabled]{
-    border-color: #ffffff
+    border-color: #000000;
 }
 
 .start-button:hover[disabled]{
-    border-color: #ffffff;
-    background-color: #ffffff;
+    border-color: #000000;
+    background-color: #000000;
 }
 
 .start-button:hover{
-    border-color: #FF0000;
-    background-color: #FFA07A;
+    border-color: #00FF7F;
+    background-color: #000000;
     -o-transition:.5s;
     -ms-transition:.5s;
     -moz-transition:.5s;
