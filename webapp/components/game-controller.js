@@ -2,7 +2,7 @@
 $(document).ready(function(){
 		
 		enableSpeechAPI();
-		setTimeout(start,15000)
+		setTimeout(start,30000)
 	});
 
 var states = {
