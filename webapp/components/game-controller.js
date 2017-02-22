@@ -1,8 +1,8 @@
 //begin recognition at startup
 $(document).ready(function(){
 		
-		enableSpeechAPI();
-		setTimeout(start,15000)
+		
+		setTimeout(start,15000);
 	});
 
 var states = {
@@ -44,6 +44,7 @@ var idToObjectName = {"hanger":"appendiabiti","fridge":"frigorifero","washingmac
 var timeInit;
 
 function start(){
+	enableSpeechAPI();
 	paperPlane = document.getElementById("paperPlane");
 	textLabel = document.getElementById("label");
 	myLog(objectsIDs);
@@ -72,12 +73,12 @@ function start(){
 	},false);
 	
 	//here we should send a request to api.ai and call speak with the answer instead of caling it directly with the string
-	speak(
-		"Ciao!"
-		,function(){ //restart recognition after tts ends if we're in the middle of a conversation
-			startRecognition();
-		}
-	);
+	// speak(
+		// "Ciao!"
+		// ,function(){ //restart recognition after tts ends if we're in the middle of a conversation
+			// startRecognition();
+		// }
+	// );
 }
 
 function mySpeakFunction(e){
